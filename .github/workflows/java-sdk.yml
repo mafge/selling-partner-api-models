@@ -23,9 +23,12 @@ jobs:
       run: curl -O https://repo1.maven.org/maven2/io/swagger/codegen/v3/swagger-codegen-cli/3.0.63/swagger-codegen-cli-3.0.63.jar
     - name: Execute swagger codegen
       run: java -jar swagger-codegen-cli-3.0.63.jar generate -i models/sellers-api-model/sellers.json -l java -t clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates -o tmp/sdk -c clients/sellingpartner-api-aa-java/resources/java/config.json
-    - name: Add Auth&Auth lib as dependency
+    - name: Add Auth&Auth lib to pom.xml
       working-directory: ./tmp/sdk
       run: sed -i '/<dependencies>/a\<dependency><groupId>com.amazon.sellingpartnerapi</groupId><artifactId>sellingpartnerapi-aa-java</artifactId><version>2.0</version></dependency>' pom.xml
+    - name: Add Maven assembly plugin to pom.xml
+      working-directory: ./tmp/sdk
+      run: sed -i '/<plugins>/a\<plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-assembly-plugin</artifactId><version>3.1.1</version><executions><execution><id>build-assembly</id><phase>package</phase><goals><goal>single</goal></goals></execution></executions><configuration><descriptorRefs><descriptorRef>jar-with-dependencies</descriptorRef></descriptorRefs></configuration></plugin>' pom.xml
     - name: Build SDK jar with Maven
       working-directory: ./tmp/sdk
       run: mvn package
@@ -33,5 +36,5 @@ jobs:
       name: Upload Java SDK jar
       with:
         name: java-sdk
-        path: tmp/sdk/target/swagger-java-client-2.0-sources.jar
+        path: tmp/sdk/target/swagger-java-client-2.0-jar-with-dependencies.jar
       
