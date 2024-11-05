@@ -19,13 +19,8 @@ jobs:
     - name: Add Auth&Auth lib to local maven repo
       working-directory: ./clients/sellingpartner-api-aa-java
       run: mvn install:install-file -Dfile=target/sellingpartnerapi-aa-java-2.0-jar-with-dependencies.jar -DgroupId=com.amazon.sellingpartnerapi -DartifactId=sellingpartnerapi-aa-java -Dversion=2.0 -Dpackaging=jar
-    - uses: nvoxland/jar-download-action@v1
-      name: Download swagger codegen
-      with:
-        groupId: io.swagger.codegen.v3
-        artifactId: swagger-codegen-cli
-        version: 3.0.63
-        outputDirectory: ./
+    - name: Download swagger codegen
+      run: curl -O https://repo1.maven.org/maven2/io/swagger/codegen/v3/swagger-codegen-cli/3.0.63/swagger-codegen-cli-3.0.63.jar
     - name: Execute swagger codegen
       run: java -jar swagger-codegen-cli-3.0.63.jar generate -i models/sellers-api-model/sellers.json -l java -t clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates -o tmp/sdk -c clients/sellingpartner-api-aa-java/resources/java/config.json
     - name: Add Auth&Auth lib as dependency
