@@ -1,0 +1,41 @@
+name: Build Java SDK
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-java@v4
+      with:
+        java-version: '8'
+        distribution: 'corretto'
+        cache: maven
+    - name: Build Auth&Auth jar with Maven
+      working-directory: ./clients/sellingpartner-api-aa-java
+      run: mvn package
+    - name: Add Auth&Auth lib to local maven repo
+      working-directory: ./clients/sellingpartner-api-aa-java
+      run: mvn install:install-file -Dfile=target/sellingpartnerapi-aa-java-2.0-jar-with-dependencies.jar -DgroupId=com.amazon.sellingpartnerapi -DartifactId=sellingpartnerapi-aa-java -Dversion=2.0 -Dpackaging=jar
+    - uses: nvoxland/jar-download-action@v1
+      name: Download swagger codegen
+      with:
+        groupId: io.swagger.codegen.v3
+        artifactId: swagger-codegen-cli
+        version: 3.0.63
+        outputDirectory: ./
+    - name: Execute swagger codegen
+      run: java -jar swagger-codegen-cli-3.0.63.jar generate -i models/sellers-api-model/sellers.json -l java -t clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates -o tmp/sdk -c clients/sellingpartner-api-aa-java/resources/java/config.json
+    - name: Add Auth&Auth lib as dependency
+      run: sed -i '/<dependencies>/a\<dependency><groupId>com.amazon.sellingpartnerapi</groupId><artifactId>sellingpartnerapi-aa-java</artifactId><version>2.0</version></dependency>' pom.xml
+    - name: Build SDK jar with Maven
+      working-directory: ./tmp/sdk
+      run: mvn package
+    - uses: actions/upload-artifact@v4
+      name: Upload Java SDK jar
+      with:
+        name: java-sdk
+        path: tmp/sdk/target/swagger-java-client-2.0-sources.jar
+      
