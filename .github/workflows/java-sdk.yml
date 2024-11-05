@@ -24,6 +24,7 @@ jobs:
     - name: Execute swagger codegen
       run: java -jar swagger-codegen-cli-3.0.63.jar generate -i models/sellers-api-model/sellers.json -l java -t clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates -o tmp/sdk -c clients/sellingpartner-api-aa-java/resources/java/config.json
     - name: Add Auth&Auth lib as dependency
+      working-directory: ./tmp/sdk
       run: sed -i '/<dependencies>/a\<dependency><groupId>com.amazon.sellingpartnerapi</groupId><artifactId>sellingpartnerapi-aa-java</artifactId><version>2.0</version></dependency>' pom.xml
     - name: Build SDK jar with Maven
       working-directory: ./tmp/sdk
