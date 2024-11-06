@@ -5,19 +5,18 @@ on: workflow_dispatch
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
+    defaults:
+      run:
+        working-directory: ./openapi-merge
 
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 22.x
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 22.x
         cache: 'npm'
-    - run: npm i openapi-merge-cli
+    - run: npm ci
     - run: npx openapi-merge-cli
     - uses: actions/upload-artifact@v4
       name: Upload unified swagger file
