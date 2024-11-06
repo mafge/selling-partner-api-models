@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    {
+      "inputFile": "./models/sellers-api-model/sellers.json"
+    },
+    {
+      "inputFile": "./models/reports-api-model/reports_2021-06-30.json",
+    },
+    {
+      "inputFile": "./models/feeds-api-model/feeds_2021-06-30.json",
+    }
+  ],
+  "output": "./selling-partner-api.json"
+}
