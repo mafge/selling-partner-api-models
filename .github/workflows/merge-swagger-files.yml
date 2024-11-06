@@ -16,6 +16,7 @@ jobs:
       with:
         node-version: 22.x
         cache: 'npm'
+        cache-dependency-path: openapi-merge/package-lock.json
     - run: npm ci
     - run: npx openapi-merge-cli
     - uses: actions/upload-artifact@v4
