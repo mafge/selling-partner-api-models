@@ -1,0 +1,26 @@
+name: Merge swagger files into one single file
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm i openapi-merge-cli
+    - run: npx openapi-merge-cli
+    - uses: actions/upload-artifact@v4
+      name: Upload unified swagger file
+      with:
+        name: selling-partner-api-spec
+        path: selling-partner-api.json
