@@ -23,4 +23,4 @@ jobs:
       name: Upload unified swagger file
       with:
         name: selling-partner-api-spec
-        path: selling-partner-api.json
+        path: ./openapi-merge/selling-partner-api.json
